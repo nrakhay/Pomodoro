@@ -17,23 +17,30 @@ enum Constants {
     static let poppinsMedium = "Poppins-Medium"
 }
 
+enum SettingTypes {
+    static let focus = "Focus"
+    static let shortBreak = "Short Break"
+    static let longBreak = "Long Break"
+}
+
 final class PomodoroSettingsVC: UIViewController {
     private let settingsData = [
-        CellSettings(text: "Focus", minutes: 25, minimumValueForSlider: 10, maximumValueForSlider: 50, accentColor: UIColor(named: Constants.tomatoRed)),
-        CellSettings(text: "Short Break", minutes: 5, minimumValueForSlider: 2, maximumValueForSlider: 10, accentColor: UIColor(named: Constants.limeGreen)),
-        CellSettings(text: "Long Break", minutes: 15, minimumValueForSlider: 10, maximumValueForSlider: 35, accentColor: UIColor(named: Constants.darkGreen))
+        CellSettings(text: SettingTypes.focus, minutes: 25, minimumValueForSlider: 10, maximumValueForSlider: 50, accentColor: UIColor(named: Constants.tomatoRed)),
+        CellSettings(text: SettingTypes.shortBreak, minutes: 5, minimumValueForSlider: 2, maximumValueForSlider: 10, accentColor: UIColor(named: Constants.limeGreen)),
+        CellSettings(text: SettingTypes.longBreak, minutes: 15, minimumValueForSlider: 10, maximumValueForSlider: 35, accentColor: UIColor(named: Constants.darkGreen))
         ]
     
     private var safeArea: UILayoutGuide!
     private var headerLabel = UILabel()
     private var sliderTableView = UITableView()
     private var startButton = UIButton()
+    private var settingsCell = SettingsCell()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         safeArea = view.layoutMarginsGuide
         view.backgroundColor = #colorLiteral(red: 1, green: 0.9921568627, blue: 0.8941176471, alpha: 1)
-        
+                
         view.addSubview(headerLabel)
         view.addSubview(sliderTableView)
         view.addSubview(startButton)
@@ -93,8 +100,14 @@ final class PomodoroSettingsVC: UIViewController {
         startButton.addTarget(self, action: #selector(startTapped), for: .touchUpInside)
     }
     
+    private var focusTime = 25
+    private var shortBreak = 5
+    private var longBreak = 15
+    
     @objc private func startTapped() {
-        let vc = TimerVC()
+        let vc = TimerVC(focus: focusTime,
+                         shortBreak: shortBreak,
+                         longBreak: longBreak)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -119,8 +132,26 @@ extension PomodoroSettingsVC: UITableViewDelegate, UITableViewDataSource {
         let setting = self.settingsData[indexPath.row]
         cell.configureCell(setting)
         cell.selectionStyle = .none
+        cell.delegate = self
         
         return cell
+    }
+}
+
+extension PomodoroSettingsVC: SettingsCellDelegate {
+    func sliderValueChanged(_ settingsCell: SettingsCell, _ val: Int) {
+        let settingTitle = settingsCell.getSettingText()
+        
+        switch settingTitle {
+        case SettingTypes.focus:
+            focusTime = val
+        case SettingTypes.shortBreak:
+            shortBreak = val
+        case SettingTypes.longBreak:
+            longBreak = val
+        default:
+            return
+        }
     }
     
 }

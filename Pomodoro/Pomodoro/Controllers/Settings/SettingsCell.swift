@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol SettingsCellDelegate {
+    func sliderValueChanged(_ settingsCell: SettingsCell , _ val: Int)
+}
+
 final class SettingsCell: UITableViewCell {
+    var delegate: SettingsCellDelegate?
+    
     private var settingLabel = UILabel()
     private var slider = UISlider()
     private var accentColor = UIColor(named: "Default")
@@ -42,6 +48,10 @@ final class SettingsCell: UITableViewCell {
         
     }
     
+    func getSettingText() -> String {
+        return settingText
+    }
+    
     private func configureSettingLabel() {
         settingLabel.font = UIFont(name: Constants.poppinsMedium, size: 20)
         settingLabel.textColor = accentColor
@@ -70,7 +80,10 @@ final class SettingsCell: UITableViewCell {
     }
     
     @objc private func sliderChanged(sender: UISlider) {
-        settingLabel.text = "\(settingText): \(Int(sender.value)) minutes"
+        let sliderValue = Int(sender.value)
+        settingLabel.text = "\(settingText): \(sliderValue) minutes"
+    
+        self.delegate?.sliderValueChanged(self, sliderValue)
     }
     
 
