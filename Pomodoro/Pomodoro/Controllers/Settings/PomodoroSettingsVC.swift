@@ -84,7 +84,7 @@ final class PomodoroSettingsVC: UIViewController {
         sliderTableView.translatesAutoresizingMaskIntoConstraints = false
         sliderTableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 20).isActive = true
         sliderTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 8).isActive = true
-        sliderTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: 8).isActive = true
+        sliderTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -8).isActive = true
         sliderTableView.heightAnchor.constraint(equalToConstant: 300).isActive = true
     }
     

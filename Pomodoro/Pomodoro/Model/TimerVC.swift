@@ -14,6 +14,9 @@ final class TimerVC: UIViewController {
     private var currentModeLabel = UILabel()
     private var startButton = UIButton()
     
+    private var pauseButton = UIButton()
+    private var stopButton = UIButton()
+    
     private var focusTime: Int
     private var shortBreakTime: Int
     private var longBreakTime: Int
@@ -88,14 +91,55 @@ final class TimerVC: UIViewController {
         startButton.imageView?.tintColor = UIColor(named: Constants.backgroundColor)
         
         setStartButtonConstraints()
+        startButton.addTarget(self, action: #selector(startButtonPressed), for: .touchUpInside)
     }
     
     func setStartButtonConstraints() {
         startButton.translatesAutoresizingMaskIntoConstraints = false
-        startButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+        startButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20).isActive = true
         startButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
-        
     }
+    
+    var currentMode = SettingTypes.focus
+    
+    @objc func startButtonPressed() {
+        startButton.removeFromSuperview()
+        
+        view.addSubview(pauseButton)
+        view.addSubview(stopButton)
+        configurePauseButton()
+        configureStopButton()
+    }
+    
+    func configurePauseButton() {
+        let mediumConfig = UIImage.SymbolConfiguration(pointSize: 50, weight: .bold, scale: .medium)
+        pauseButton.setImage(UIImage(systemName: "pause.circle.fill", withConfiguration: mediumConfig), for: .normal)
+        pauseButton.imageView?.tintColor = UIColor(named: Constants.backgroundColor)
+        
+        setPauseButtonConstraints()
+    }
+    
+    func setPauseButtonConstraints() {
+        pauseButton.translatesAutoresizingMaskIntoConstraints = false
+        pauseButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20).isActive = true
+        pauseButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor, constant: -40).isActive = true
+    }
+    
+    func configureStopButton() {
+        let mediumConfig = UIImage.SymbolConfiguration(pointSize: 50, weight: .bold, scale: .medium)
+        stopButton.setImage(UIImage(systemName: "stop.circle.fill", withConfiguration: mediumConfig), for: .normal)
+        stopButton.imageView?.tintColor = UIColor(named: Constants.backgroundColor)
+        
+        setStopButtonConstraints()
+    }
+    
+    func setStopButtonConstraints() {
+        stopButton.translatesAutoresizingMaskIntoConstraints = false
+        stopButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20).isActive = true
+        stopButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor, constant: 40).isActive = true
+    }
+    
+
     
 
 }
