@@ -26,8 +26,6 @@ final class TimerVC: UIViewController {
         self.shortBreakTime = shortBreak
         self.longBreakTime = longBreak
         
-//        timeLeftInSeconds = focusTime * 60
-        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -64,6 +62,7 @@ final class TimerVC: UIViewController {
         timeLeftLabel.text = "\(focusTime):00"
         timeLeftLabel.textColor = UIColor(named: Constants.backgroundColor)
         timeLeftLabel.font = UIFont(name: Constants.poppinsBold, size: 86)
+        timeLeftLabel.textAlignment = .center
         
         setTimeLeftLabelConstraints()
     }
@@ -72,10 +71,11 @@ final class TimerVC: UIViewController {
         timeLeftLabel.translatesAutoresizingMaskIntoConstraints = false
         timeLeftLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 30).isActive = true
         timeLeftLabel.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
+        timeLeftLabel.widthAnchor.constraint(equalTo: safeArea.widthAnchor).isActive = true
     }
     
     private func configureCurrentModeLabel() {
-        currentModeLabel.text = "Focus on work"
+        currentModeLabel.text = "It's time to focus!"
         currentModeLabel.font = UIFont(name: Constants.poppinsMedium, size: 28)
         currentModeLabel.textColor = UIColor(named: Constants.backgroundColor)
         setCurrentModeLabelConstraints()
@@ -102,8 +102,6 @@ final class TimerVC: UIViewController {
         startButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
     }
     
-    private var currentMode = SettingTypes.focus
-    
     @objc func startButtonPressed() {
         startButton.removeFromSuperview()
         
@@ -111,30 +109,34 @@ final class TimerVC: UIViewController {
         view.addSubview(stopButton)
         configurePauseButton()
         configureStopButton()
+        
         startOrContinueCycle()
     }
     
-    var counter = 0
+    private var cycleCounter = 0
     
     private func timeLength() -> Int{
-        switch (counter % 7 == 0, counter % 2 == 0) {
+        switch (cycleCounter % 7 == 0, cycleCounter % 2 == 0) {
         case (true, false):
-            counter = 0
-            return 5
+            cycleCounter = 0
+            currentModeLabel.text = "Enjoy your long break!"
+            return longBreakTime
         case ( _, true):
-            counter += 1
-            return 10
+            cycleCounter += 1
+            currentModeLabel.text = "It's time to focus!"
+            return focusTime
         default:
-            counter += 1
-            return 2
+            cycleCounter += 1
+            currentModeLabel.text = "Take a short break!"
+            return shortBreakTime
         }
     }
     
-    var timer = Timer()
+    private var timer = Timer()
     
-    var timeForPausePressed = 0
+    private var timeForPausePressed = 0
     private func startTimer(for time: Int) {
-        var timeInSeconds = time
+        var timeInSeconds = time * 60 - 1
         
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             if (timeInSeconds == 0) {
@@ -149,8 +151,6 @@ final class TimerVC: UIViewController {
 
             self?.setTimeLeftLabelText(minutes: min, seconds: sec)
 
-            print(timeInSeconds)
-
             timeInSeconds -= 1
             self?.timeForPausePressed = timeInSeconds
         }
@@ -158,6 +158,7 @@ final class TimerVC: UIViewController {
     
     //consider renaming this var
     private var isStartedAlready = false
+    
     private func startOrContinueCycle() {
         if isStartedAlready && pausePressed {
             startTimer(for: timeForPausePressed)
@@ -172,7 +173,15 @@ final class TimerVC: UIViewController {
         DispatchQueue.main.async {
             var time = "\(minutes):\(seconds)"
             
-            if (seconds < 10) {
+//            if seconds < 10 && minutes < 10 {
+//                time = "0\(minutes):0\(seconds)"
+//            } else if (seconds < 10) {
+//                time = "\(minutes):0\(seconds)"
+//            } else if (minutes < 10) {
+//                time = "0\(minutes):\(seconds)"
+//            }
+            
+            if seconds < 10 {
                 time = "\(minutes):0\(seconds)"
             }
             
@@ -205,8 +214,6 @@ final class TimerVC: UIViewController {
             pauseButton.setImage(UIImage(systemName: "pause.circle.fill", withConfiguration: mediumButtonConfig), for: .normal)
             startOrContinueCycle()
         }
-        
-        
     }
     
     private func configureStopButton() {
