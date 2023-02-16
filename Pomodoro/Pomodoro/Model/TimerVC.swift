@@ -102,10 +102,7 @@ final class TimerVC: UIViewController {
         startButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
     }
     
-    
-    
     private var currentMode = SettingTypes.focus
-    
     
     @objc func startButtonPressed() {
         startButton.removeFromSuperview()
@@ -115,9 +112,7 @@ final class TimerVC: UIViewController {
         configurePauseButton()
         configureStopButton()
         startOrContinueCycle()
-        isStartedAlready = true
     }
-    
     
     var counter = 0
     
@@ -164,17 +159,24 @@ final class TimerVC: UIViewController {
     //consider renaming this var
     private var isStartedAlready = false
     private func startOrContinueCycle() {
-        if isStartedAlready {
+        if isStartedAlready && pausePressed {
             startTimer(for: timeForPausePressed)
             isStartedAlready = false
         } else {
+            isStartedAlready = true
             startTimer(for: timeLength())
         }
     }
     
     private func setTimeLeftLabelText(minutes: Int, seconds: Int) {
         DispatchQueue.main.async {
-            self.timeLeftLabel.text = "\(minutes):\(seconds)"
+            var time = "\(minutes):\(seconds)"
+            
+            if (seconds < 10) {
+                time = "\(minutes):0\(seconds)"
+            }
+            
+            self.timeLeftLabel.text = time
         }
     }
     
