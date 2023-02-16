@@ -26,6 +26,8 @@ final class TimerVC: UIViewController {
         self.shortBreakTime = shortBreak
         self.longBreakTime = longBreak
         
+//        timeLeftInSeconds = focusTime * 60
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -49,16 +51,16 @@ final class TimerVC: UIViewController {
         configureStartButton()
     }
     
-    func configureNavigationBar() {
+    private func configureNavigationBar() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.backward"), style: .done, target: self, action: #selector(popCurrentVC))
         navigationItem.leftBarButtonItem?.tintColor = UIColor(named: Constants.backgroundColor)
     }
     
-    @objc func popCurrentVC() {
+    @objc private func popCurrentVC() {
         navigationController?.popViewController(animated: true)
     }
     
-    func configureTimeLeftLabel() {
+    private func configureTimeLeftLabel() {
         timeLeftLabel.text = "\(focusTime):00"
         timeLeftLabel.textColor = UIColor(named: Constants.backgroundColor)
         timeLeftLabel.font = UIFont(name: Constants.poppinsBold, size: 86)
@@ -66,41 +68,44 @@ final class TimerVC: UIViewController {
         setTimeLeftLabelConstraints()
     }
     
-    func setTimeLeftLabelConstraints() {
+    private func setTimeLeftLabelConstraints() {
         timeLeftLabel.translatesAutoresizingMaskIntoConstraints = false
         timeLeftLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 30).isActive = true
         timeLeftLabel.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
     }
     
-    func configureCurrentModeLabel() {
+    private func configureCurrentModeLabel() {
         currentModeLabel.text = "Focus on work"
         currentModeLabel.font = UIFont(name: Constants.poppinsMedium, size: 28)
         currentModeLabel.textColor = UIColor(named: Constants.backgroundColor)
         setCurrentModeLabelConstraints()
     }
     
-    func setCurrentModeLabelConstraints() {
+    private func setCurrentModeLabelConstraints() {
         currentModeLabel.translatesAutoresizingMaskIntoConstraints = false
         currentModeLabel.topAnchor.constraint(equalTo: timeLeftLabel.bottomAnchor).isActive = true
         currentModeLabel.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
     }
     
-    func configureStartButton() {
-        let largeConfig = UIImage.SymbolConfiguration(pointSize: 70, weight: .bold, scale: .large)
-        startButton.setImage(UIImage(systemName: "play.circle.fill", withConfiguration: largeConfig), for: .normal)
+    private let largeButtonConfig = UIImage.SymbolConfiguration(pointSize: 70, weight: .bold, scale: .large)
+    private func configureStartButton() {
+        startButton.setImage(UIImage(systemName: "play.circle.fill", withConfiguration: largeButtonConfig), for: .normal)
         startButton.imageView?.tintColor = UIColor(named: Constants.backgroundColor)
         
         setStartButtonConstraints()
         startButton.addTarget(self, action: #selector(startButtonPressed), for: .touchUpInside)
     }
     
-    func setStartButtonConstraints() {
+    private func setStartButtonConstraints() {
         startButton.translatesAutoresizingMaskIntoConstraints = false
         startButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20).isActive = true
         startButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor).isActive = true
     }
     
-    var currentMode = SettingTypes.focus
+    
+    
+    private var currentMode = SettingTypes.focus
+    
     
     @objc func startButtonPressed() {
         startButton.removeFromSuperview()
@@ -109,31 +114,122 @@ final class TimerVC: UIViewController {
         view.addSubview(stopButton)
         configurePauseButton()
         configureStopButton()
+        startOrContinueCycle()
+        isStartedAlready = true
     }
     
-    func configurePauseButton() {
-        let mediumConfig = UIImage.SymbolConfiguration(pointSize: 50, weight: .bold, scale: .medium)
-        pauseButton.setImage(UIImage(systemName: "pause.circle.fill", withConfiguration: mediumConfig), for: .normal)
+    
+    var counter = 0
+    
+    private func timeLength() -> Int{
+        switch (counter % 7 == 0, counter % 2 == 0) {
+        case (true, false):
+            counter = 0
+            return 5
+        case ( _, true):
+            counter += 1
+            return 10
+        default:
+            counter += 1
+            return 2
+        }
+    }
+    
+    var timer = Timer()
+    
+    var timeForPausePressed = 0
+    private func startTimer(for time: Int) {
+        var timeInSeconds = time
+        
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            if (timeInSeconds == 0) {
+                DispatchQueue.main.async {
+                    self?.startOrContinueCycle()
+                }
+                timer.invalidate()
+            }
+
+            let min = timeInSeconds / 60
+            let sec = timeInSeconds % 60
+
+            self?.setTimeLeftLabelText(minutes: min, seconds: sec)
+
+            print(timeInSeconds)
+
+            timeInSeconds -= 1
+            self?.timeForPausePressed = timeInSeconds
+        }
+    }
+    
+    //consider renaming this var
+    private var isStartedAlready = false
+    private func startOrContinueCycle() {
+        if isStartedAlready {
+            startTimer(for: timeForPausePressed)
+            isStartedAlready = false
+        } else {
+            startTimer(for: timeLength())
+        }
+    }
+    
+    private func setTimeLeftLabelText(minutes: Int, seconds: Int) {
+        DispatchQueue.main.async {
+            self.timeLeftLabel.text = "\(minutes):\(seconds)"
+        }
+    }
+    
+    private let mediumButtonConfig = UIImage.SymbolConfiguration(pointSize: 50, weight: .bold, scale: .medium)
+    private func configurePauseButton() {
+        pauseButton.setImage(UIImage(systemName: "pause.circle.fill", withConfiguration: mediumButtonConfig), for: .normal)
         pauseButton.imageView?.tintColor = UIColor(named: Constants.backgroundColor)
         
         setPauseButtonConstraints()
+        pauseButton.addTarget(self, action: #selector(pauseButtonPressed), for: .touchUpInside)
     }
     
-    func setPauseButtonConstraints() {
+    private func setPauseButtonConstraints() {
         pauseButton.translatesAutoresizingMaskIntoConstraints = false
         pauseButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20).isActive = true
         pauseButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor, constant: -40).isActive = true
     }
     
-    func configureStopButton() {
+    private var pausePressed = false
+    @objc private func pauseButtonPressed() {
+        pausePressed = !pausePressed
+        if pausePressed {
+            pauseButton.setImage(UIImage(systemName: "play.circle.fill", withConfiguration: mediumButtonConfig), for: .normal)
+            timer.invalidate()
+        } else {
+            pauseButton.setImage(UIImage(systemName: "pause.circle.fill", withConfiguration: mediumButtonConfig), for: .normal)
+            startOrContinueCycle()
+        }
+        
+        
+    }
+    
+    private func configureStopButton() {
         let mediumConfig = UIImage.SymbolConfiguration(pointSize: 50, weight: .bold, scale: .medium)
         stopButton.setImage(UIImage(systemName: "stop.circle.fill", withConfiguration: mediumConfig), for: .normal)
         stopButton.imageView?.tintColor = UIColor(named: Constants.backgroundColor)
         
         setStopButtonConstraints()
+        stopButton.addTarget(self, action: #selector(stopButtonPressed), for: .touchUpInside)
     }
+                             
+     @objc private func stopButtonPressed() {
+         timer.invalidate()
+         isStartedAlready = false
+         
+         view.addSubview(startButton)
+         
+         configureStartButton()
+         pauseButton.removeFromSuperview()
+         stopButton.removeFromSuperview()
+         
+         timeLeftLabel.text = "\(focusTime):00"
+     }
     
-    func setStopButtonConstraints() {
+    private func setStopButtonConstraints() {
         stopButton.translatesAutoresizingMaskIntoConstraints = false
         stopButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20).isActive = true
         stopButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor, constant: 40).isActive = true

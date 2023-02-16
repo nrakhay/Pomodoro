@@ -10,6 +10,7 @@
 		5CD249D32993ECEB00C422F0 /* SettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD249D22993ECEB00C422F0 /* SettingsCell.swift */; };
 		5CD249D52993F11500C422F0 /* CellSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD249D42993F11500C422F0 /* CellSettings.swift */; };
 		5CD249DB2995552B00C422F0 /* TimerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD249DA2995552B00C422F0 /* TimerVC.swift */; };
+		5CD249DD299A84AD00C422F0 /* CustomTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD249DC299A84AD00C422F0 /* CustomTimer.swift */; };
 		5CE7721E2993DCC6003504CB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE7721D2993DCC6003504CB /* AppDelegate.swift */; };
 		5CE772202993DCC6003504CB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE7721F2993DCC6003504CB /* SceneDelegate.swift */; };
 		5CE772272993DCC7003504CB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5CE772262993DCC7003504CB /* Assets.xcassets */; };
@@ -26,6 +27,7 @@
 		5CD249D22993ECEB00C422F0 /* SettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCell.swift; sourceTree = "<group>"; };
 		5CD249D42993F11500C422F0 /* CellSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellSettings.swift; sourceTree = "<group>"; };
 		5CD249DA2995552B00C422F0 /* TimerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimerVC.swift; path = ../Model/TimerVC.swift; sourceTree = "<group>"; };
+		5CD249DC299A84AD00C422F0 /* CustomTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTimer.swift; sourceTree = "<group>"; };
 		5CE7721A2993DCC6003504CB /* Pomodoro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pomodoro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CE7721D2993DCC6003504CB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5CE7721F2993DCC6003504CB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 		5CE772112993DCC6003504CB = {
 			isa = PBXGroup;
 			children = (
+				5CD249DC299A84AD00C422F0 /* CustomTimer.swift */,
 				5CE7721C2993DCC6003504CB /* Pomodoro */,
 				5CE7721B2993DCC6003504CB /* Products */,
 			);
@@ -195,6 +198,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CD249DD299A84AD00C422F0 /* CustomTimer.swift in Sources */,
 				5CD249D52993F11500C422F0 /* CellSettings.swift in Sources */,
 				5CE772342993DDE2003504CB /* PomodoroSettingsVC.swift in Sources */,
 				5CE7721E2993DCC6003504CB /* AppDelegate.swift in Sources */,
