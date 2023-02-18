@@ -120,15 +120,15 @@ final class TimerVC: UIViewController {
         case (true, false):
             cycleCounter = 0
             currentModeLabel.text = "Enjoy your long break!"
-            return 3
+            return longBreakTime
         case ( _, true):
             cycleCounter += 1
             currentModeLabel.text = "It's time to focus!"
-            return 5
+            return focusTime
         default:
             cycleCounter += 1
             currentModeLabel.text = "Take a short break!"
-            return 2
+            return shortBreakTime
         }
     }
     
