@@ -136,7 +136,7 @@ final class TimerVC: UIViewController {
     
     private var timeForPausePressed = 0
     private func startTimer(for time: Int) {
-        var timeInSeconds = time
+        var timeInSeconds = time * 60 - 1
         
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             if (timeInSeconds <= 0) {
