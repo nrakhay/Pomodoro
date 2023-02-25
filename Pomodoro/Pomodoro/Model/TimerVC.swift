@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 final class TimerVC: UIViewController {
     private var safeArea: UILayoutGuide!
@@ -20,6 +21,8 @@ final class TimerVC: UIViewController {
     private var focusTime: Int
     private var shortBreakTime: Int
     private var longBreakTime: Int
+    
+    private var player: AVAudioPlayer?
     
     init(focus: Int, shortBreak: Int, longBreak: Int) {
         self.focusTime = focus
@@ -145,6 +148,11 @@ final class TimerVC: UIViewController {
             if (timeSet <= 0) {
                 DispatchQueue.main.async {
                     timer.invalidate()
+                    
+                    let url = Bundle.main.url(forResource: "bellSound", withExtension: "mp3")
+                    self?.player = try! AVAudioPlayer(contentsOf: url!)
+                    self?.player!.play()
+                    
                     self?.startCycle()
                 }
             }
