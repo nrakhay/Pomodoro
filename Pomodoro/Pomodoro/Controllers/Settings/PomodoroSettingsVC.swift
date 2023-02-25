@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SwiftySound
 
 enum Constants {
     static let settingsCell = "SettingsCell"
